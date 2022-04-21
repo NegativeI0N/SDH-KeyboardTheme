@@ -4,8 +4,238 @@
         <link rel="stylesheet" href="/steam_resource/css/39.css">
         <link rel="stylesheet" href="/steam_resource/css/library.css">
         <script src="/static/library.js"></script>
-    </head>
-    <body>
-        <h2>Hello World</h2>
+		<link rel="stylesheet" href="/static/styles.css">
+		<script>
+			var kbthemecode = `
+				var kbtheme = 'DefaultTheme'
+				
+				function waitForElm(selector) {
+					return new Promise(resolve => {
+						if (document.querySelector(selector)) {
+							return resolve(document.querySelector(selector));
+						}
+
+						const observer = new MutationObserver(mutations => {
+							if (document.querySelector(selector)) {
+								resolve(document.querySelector(selector));
+								observer.disconnect();
+							}
+						});
+
+						observer.observe(document.body, {
+							childList: true,
+							subtree: true
+						});
+					});
+				}
+
+				function waitForElmRemove(selector) {
+					return new Promise(resolve => {
+
+						const observer = new MutationObserver(mutations => {
+							if (!document.querySelector(selector)) {
+								resolve(selector);
+								observer.disconnect();
+							}
+						});
+
+						observer.observe(document.body, {
+							childList: true,
+							subtree: true
+						});
+					});
+				}
+
+				function EleRemove(){
+					waitForElmRemove('.virtualkeyboard_Keyboard_45rH7').then((elm) => {
+						console.log('Keyboard Closed')
+						EleAdd();
+					});
+				}
+
+				function EleAdd() {
+					waitForElm('.virtualkeyboard_Keyboard_45rH7').then((elm) => {
+						console.log('Keyboard Opened');
+						elm.classList.replace("DefaultTheme", kbtheme);
+						EleRemove();
+					});
+				}
+			`
+		</script>
+		<script>
+			var KBCodeInj = `
+				var kbs = document.createElement('script');
+				kbs.innerHTML = \`${kbthemecode}\`;
+				kbs.id = 'kb-code';
+				document.getElementsByTagName('head')[0].appendChild(kbs);
+				EleAdd();
+			`;
+
+			function setToggleState(id, state) {
+				const ENABLED_CLASS = "gamepaddialog_On_yLrDA";
+				let toggle = document.getElementById(id);
+
+				if (state && !toggle.classList.contains(ENABLED_CLASS)) {
+					toggle.classList.add(ENABLED_CLASS);
+				}
+
+				if (!state && toggle.classList.contains(ENABLED_CLASS)) {
+					toggle.classList.remove(ENABLED_CLASS);
+				}
+			}			
+			
+			function InjKBCode() {
+				execute_in_tab('SP', true, KBCodeInj);
+			}
+			
+			function KbThemeToggle(theme){
+				let toggle = document.getElementById(theme);
+
+				let isActive = toggle.classList.contains("gamepaddialog_On_yLrDA");
+
+				if (isActive) {
+						value = false;
+						console.log("Removing KB Theme")
+						execute_in_tab('SP', true, `kbtheme = 'DefaultTheme'`);
+						setToggleState(theme, value);
+				}
+				else {
+						value = true;
+						console.log("Applying KB Theme")
+						execute_in_tab('SP', true, `kbtheme = '${theme}'`);
+						setToggleState(theme, value);
+				}
+			}
+
+		</script>
+	</head>
+    <body onload="InjKBCode();">
+        <div class="quickaccessmenu_TabGroupPanel_1QO7b Panel Focusable">
+		<div class="quickaccesscontrols_PanelSection_Ob5uo">
+			<div class="quickaccesscontrols_PanelSectionTitle_RtCjX">
+				<div class="quickaccesscontrols_Text_1EPCJ">Keyboard Themes</div>
+			</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									DEX (512gb Theme)
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="DEX" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('DEX')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Classic
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="SteamGreen" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('SteamGreen')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Totally Tubular
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="TotallyTubular" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('TotallyTubular')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Test Chamber
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="TestChamber" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('TestChamber')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Spectrum
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="Spectrum" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('Spectrum')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Lounger
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="Lounger" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('Lounger')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Pumpkin
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="Pumpkin" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('Pumpkin')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>
+				<div class="quickaccesscontrols_PanelSectionRow_26R5w">
+                    <div class="basicdialog_Field_ugL9c basicdialog_WithFirstRow_31BpU basicdialog_WithBottomSeparator_1e8sp basicdialog_ExtraPaddingOnChildrenBelow_2-owv basicdialog_StandardPadding_1HrfN basicdialog_HighlightOnFocus_1xh2W Panel Focusable" style="--indent-level:0;">
+                        <div class="gamepaddialog_FieldLabelRow_2VcTl">
+							<div class="gamepaddialog_FieldLabel_3jMlJ">
+									Celebration
+							</div>
+							<div class="gamepaddialog_FieldChildren_2rhav">
+								<div id="Celebration" class="gamepaddialog_Toggle_9Ql-o" tabindex="0" onclick="KbThemeToggle('Celebration')">
+									<div class="gamepaddialog_ToggleRail_2bl0i"></div>
+									<div class="gamepaddialog_ToggleSwitch_1PQpp"></div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</div>				
+			</div>
+		</div>
     </body>
 </html>

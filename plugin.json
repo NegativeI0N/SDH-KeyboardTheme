@@ -1,7 +1,12 @@
 {
-    "name": "Plugin name",
-    "author": "Plugin author",
+    "name": "Keyboard Control",
+    "author": "NegativeION#0114",
     "main_view_html": "main_view.html",
     "tile_view_html": "",
-    "flags": ["_hot_reload", "_root"]
+    "flags": ["_hot_reload"],
+	"publish": {
+        "discord_id": "346110507197136918",
+        "description": "Control and use any keyboard theme",
+        "tags": ["style","theme"]
+        }
 }
